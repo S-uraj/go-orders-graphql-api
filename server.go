@@ -7,6 +7,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/S-uraj/go-orders-graphql-api/database"
 	"github.com/S-uraj/go-orders-graphql-api/graph"
 )
 
@@ -18,7 +19,13 @@ func main() {
 		port = defaultPort
 	}
 
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+	// establish connection
+	database.ConnectDB()
+	// create db
+	database.CreateDB()
+	// migrate the db with Post model
+	database.MigrateDB()
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{Database: database.DBInstance}}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
