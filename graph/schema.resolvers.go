@@ -7,13 +7,29 @@ package graph
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/S-uraj/go-orders-graphql-api/graph/model"
 )
 
 // CreatePost is the resolver for the CreatePost field.
 func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) (*model.Post, error) {
-	panic(fmt.Errorf("not implemented: CreatePost - CreatePost"))
+	Addpost := model.Post{
+		Title:       input.Title,
+		Content:     input.Content,
+		Author:      *input.Author,
+		Hero:        *input.Hero,
+		PublishedAt: time.Now().Format("29-03-2023"),
+		UpdatedAt:   time.Now().Format("29-03-2023"),
+	}
+
+	if err := r.Database.Create(&Addpost).Error; err != nil {
+		fmt.Println(err)
+		return nil, err
+
+	}
+
+	return &Addpost, nil
 }
 
 // UpdatePost is the resolver for the UpdatePost field.
