@@ -34,17 +34,44 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) 
 
 // UpdatePost is the resolver for the UpdatePost field.
 func (r *mutationResolver) UpdatePost(ctx context.Context, postID int, input *model.NewPost) (*model.Post, error) {
-	panic(fmt.Errorf("not implemented: UpdatePost - UpdatePost"))
+	Updatepost := model.Post{
+		Title:     input.Title,
+		Content:   input.Content,
+		UpdatedAt: time.Now().Format("29-03-2023"),
+	}
+
+	if err := r.Database.Model(&model.Post{}).Where("id=?", postID).Updates(&Updatepost).Error; err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	Updatepost.ID = postID
+	return &Updatepost, nil
 }
 
 // GetAllPosts is the resolver for the GetAllPosts field.
 func (r *queryResolver) GetAllPosts(ctx context.Context) ([]*model.Post, error) {
-	panic(fmt.Errorf("not implemented: GetAllPosts - GetAllPosts"))
+	posts := []*model.Post{}
+
+	GetPosts := r.Database.Model(&posts).Find(&posts)
+
+	if GetPosts.Error != nil {
+		fmt.Println(GetPosts.Error)
+		return nil, GetPosts.Error
+	}
+	return posts, nil
 }
 
 // GetOnePost is the resolver for the GetOnePost field.
 func (r *queryResolver) GetOnePost(ctx context.Context, id int) (*model.Post, error) {
-	panic(fmt.Errorf("not implemented: GetOnePost - GetOnePost"))
+	post := model.Post{}
+
+	if err := r.Database.Find(&post, id).Error; err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	return &post, nil
 }
 
 // Mutation returns MutationResolver implementation.
