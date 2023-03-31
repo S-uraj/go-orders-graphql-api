@@ -45,7 +45,7 @@ func CreateDB() {
 func MigrateDB() {
 	// migrate and sync the model to create a db table
 	DBInstance.AutoMigrate(&model.Post{}, model.Comment{})
-	//DBInstance.Model(&model.Comment{}).AddForeignKey("post_id", "posts(id)", "CASCADE", "CASCADE")
+	DBInstance.Model(&model.Comment{}).AddForeignKey("post_id", "posts(id)", "CASCADE", "CASCADE")
 
 	fmt.Println("Database migration completed....")
 }

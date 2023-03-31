@@ -3,8 +3,8 @@
 package model
 
 type Comment struct {
-	ID          string `json:"id"`
-	PostID      int    `json:"postID"`
+	ID          string `json:"id" gorm:"PRIMARY_KEY;AUTO_INCREMENT;NOT NULL`
+	PostID      int    `json:"postID" gorm:"foreignKey:PostID`
 	Description string `json:"Description"`
 }
 
@@ -24,12 +24,12 @@ type NewPost struct {
 }
 
 type Post struct {
-	ID          int        `json:"id"`
+	ID          int        `json:"id" gorm:"PRIMARY_KEY;AUTO_INCREMENT;NOT NULL`
 	Title       string     `json:"Title"`
 	Content     string     `json:"Content"`
 	Author      string     `json:"Author"`
 	Hero        string     `json:"Hero"`
 	PublishedAt string     `json:"Published_At"`
 	UpdatedAt   string     `json:"Updated_At"`
-	Comments    []*Comment `json:"Comments,omitempty"`
+	Comments    []*Comment `json:"Comments,omitempty" gorm:"foreignKey:PostID`
 }
