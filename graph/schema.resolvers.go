@@ -37,6 +37,11 @@ func (r *mutationResolver) UpdatePost(ctx context.Context, postID int, input *mo
 		UpdatedAt: time.Now().Format("29-03-2023"),
 	}
 
+	GetPost := r.Database.Preload("Comments").First(&Updatepost, postID)
+    if GetPost.Error != nil {
+        fmt.Println(GetPost.Error)
+        return nil, GetPost.Error
+    }
 	if err := r.Database.Model(&model.Post{}).Where("id=?", postID).Updates(&Updatepost).Error; err != nil {
 		fmt.Println(err)
 		return nil, err
