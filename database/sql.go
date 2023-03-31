@@ -3,7 +3,7 @@ package database
 import (
 	"fmt"
 
-	"github.com/S-uraj/go-orders-graphql-api/dbmodel"
+	"github.com/S-uraj/go-orders-graphql-api/graph/model"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 )
@@ -44,6 +44,8 @@ func CreateDB() {
 
 func MigrateDB() {
 	// migrate and sync the model to create a db table
-	DBInstance.AutoMigrate(&dbmodel.Post{})
+	DBInstance.AutoMigrate(&model.Post{}, model.Comment{})
+	//DBInstance.Model(&model.Comment{}).AddForeignKey("post_id", "posts(id)", "CASCADE", "CASCADE")
+
 	fmt.Println("Database migration completed....")
 }

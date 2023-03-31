@@ -10,11 +10,19 @@ type Post {
   Hero: String!
   Published_At: String!
   Updated_At: String!
+  Comments: [Comment]
+}
+
+type Comment {
+  id: ID!
+  postID: Int!
+  Description: String!
 }
  
 type Query {
   GetAllPosts: [Post!]!
   GetOnePost(id: Int!): Post!
+  GetComments: [Comment!]!
 }
  
 input NewPost {
@@ -24,9 +32,16 @@ input NewPost {
   Hero: String
   Published_At: String
   Updated_At: String
+  Comments: [NewComment!]!
+}
+
+input NewComment{
+ Description: String!
+ postId: Int!
 }
  
 type Mutation {
   CreatePost(input: NewPost!): Post!
   UpdatePost(PostId: Int!, input: NewPost): Post!
+  CreateComment(input: NewComment!):Comment!
 }

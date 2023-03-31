@@ -10,11 +10,12 @@ import (
 	"time"
 
 	"github.com/S-uraj/go-orders-graphql-api/graph/model"
+	"github.com/google/uuid"
 )
 
 // CreatePost is the resolver for the CreatePost field.
 func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) (*model.Post, error) {
-	Addpost := model.Post{
+	post := &model.Post{
 		Title:       input.Title,
 		Content:     input.Content,
 		Author:      *input.Author,
@@ -22,14 +23,10 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) 
 		PublishedAt: time.Now().Format("29-03-2023"),
 		UpdatedAt:   time.Now().Format("29-03-2023"),
 	}
-
-	if err := r.Database.Create(&Addpost).Error; err != nil {
-		fmt.Println(err)
+	if err := r.Database.Create(post).Error; err != nil {
 		return nil, err
-
 	}
-
-	return &Addpost, nil
+	return post, nil
 }
 
 // UpdatePost is the resolver for the UpdatePost field.
@@ -49,29 +46,70 @@ func (r *mutationResolver) UpdatePost(ctx context.Context, postID int, input *mo
 	return &Updatepost, nil
 }
 
+// CreateComment is the resolver for the CreateComment field.
+func (r *mutationResolver) CreateComment(ctx context.Context, input model.NewComment) (*model.Comment, error) {
+	commentID := uuid.New().String()
+
+	// create a new Comment object
+	comment := &model.Comment{
+		ID:          commentID,
+		PostID:      input.PostID,
+		Description: input.Description,
+	}
+
+	// save the new comment to the database
+	err := r.Database.Create(comment).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// update the Post object to include the new Comment
+	var post model.Post
+	err = r.Database.Where("id = ?", input.PostID).First(&post).Error
+	if err != nil {
+		return nil, err
+	}
+	post.Comments = append(post.Comments, comment)
+
+	// save the updated Post to the database
+	err = r.Database.Save(&post).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return comment, nil
+}
+
 // GetAllPosts is the resolver for the GetAllPosts field.
 func (r *queryResolver) GetAllPosts(ctx context.Context) ([]*model.Post, error) {
 	posts := []*model.Post{}
+	// Eager-load the associated comments for each post
+	query := r.Database.Preload("Comments")
 
-	GetPosts := r.Database.Model(&posts).Find(&posts)
-
-	if GetPosts.Error != nil {
-		fmt.Println(GetPosts.Error)
-		return nil, GetPosts.Error
+	// Find all posts and their associated comments
+	if err := query.Find(&posts).Error; err != nil {
+		fmt.Println(err)
+		return nil, err
 	}
+
 	return posts, nil
 }
 
 // GetOnePost is the resolver for the GetOnePost field.
 func (r *queryResolver) GetOnePost(ctx context.Context, id int) (*model.Post, error) {
-	post := model.Post{}
+	post := &model.Post{}
+    // Finder method
+    GetPost := r.Database.Preload("Comments").First(&post, id)
+    if GetPost.Error != nil {
+        fmt.Println(GetPost.Error)
+        return nil, GetPost.Error
+    }
+    return post, nil
+}
 
-	if err := r.Database.Find(&post, id).Error; err != nil {
-		fmt.Println(err)
-		return nil, err
-	}
-
-	return &post, nil
+// GetComments is the resolver for the GetComments field.
+func (r *queryResolver) GetComments(ctx context.Context) ([]*model.Comment, error) {
+	panic(fmt.Errorf("not implemented: GetComments - GetComments"))
 }
 
 // Mutation returns MutationResolver implementation.

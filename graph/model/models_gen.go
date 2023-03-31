@@ -2,21 +2,34 @@
 
 package model
 
+type Comment struct {
+	ID          string `json:"id"`
+	PostID      int    `json:"postID"`
+	Description string `json:"Description"`
+}
+
+type NewComment struct {
+	Description string `json:"Description"`
+	PostID      int    `json:"postId"`
+}
+
 type NewPost struct {
-	Title       string  `json:"Title"`
-	Content     string  `json:"Content"`
-	Author      *string `json:"Author,omitempty"`
-	Hero        *string `json:"Hero,omitempty"`
-	PublishedAt *string `json:"Published_At,omitempty"`
-	UpdatedAt   *string `json:"Updated_At,omitempty"`
+	Title       string        `json:"Title"`
+	Content     string        `json:"Content"`
+	Author      *string       `json:"Author,omitempty"`
+	Hero        *string       `json:"Hero,omitempty"`
+	PublishedAt *string       `json:"Published_At,omitempty"`
+	UpdatedAt   *string       `json:"Updated_At,omitempty"`
+	Comments    []*NewComment `json:"Comments"`
 }
 
 type Post struct {
-	ID          int    `json:"id"`
-	Title       string `json:"Title"`
-	Content     string `json:"Content"`
-	Author      string `json:"Author"`
-	Hero        string `json:"Hero"`
-	PublishedAt string `json:"Published_At"`
-	UpdatedAt   string `json:"Updated_At"`
+	ID          int        `json:"id"`
+	Title       string     `json:"Title"`
+	Content     string     `json:"Content"`
+	Author      string     `json:"Author"`
+	Hero        string     `json:"Hero"`
+	PublishedAt string     `json:"Published_At"`
+	UpdatedAt   string     `json:"Updated_At"`
+	Comments    []*Comment `json:"Comments,omitempty"`
 }
