@@ -1,17 +1,13 @@
-# GraphQL schema example
-#
-# https://gqlgen.com/getting-started/
 
 type Post {
   id: Int!
-  Title: String!
+  Title: String! @isDatabaseField
   Content: String!
   Author: String!
   Hero: String!
   Published_At: String!
   Updated_At: String!
-  Comments: [Comment]
-}
+  Comments: [Comment] }
 
 type Comment {
   id: ID!

@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/S-uraj/go-orders-graphql-api/graph/model"
 	"github.com/google/uuid"
 )
@@ -38,10 +39,11 @@ func (r *mutationResolver) UpdatePost(ctx context.Context, postID int, input *mo
 	}
 
 	GetPost := r.Database.Preload("Comments").First(&Updatepost, postID)
-    if GetPost.Error != nil {
-        fmt.Println(GetPost.Error)
-        return nil, GetPost.Error
-    }
+	if GetPost.Error != nil {
+		fmt.Println(GetPost.Error)
+		return nil, GetPost.Error
+	}
+
 	if err := r.Database.Model(&model.Post{}).Where("id=?", postID).Updates(&Updatepost).Error; err != nil {
 		fmt.Println(err)
 		return nil, err
@@ -103,13 +105,13 @@ func (r *queryResolver) GetAllPosts(ctx context.Context) ([]*model.Post, error) 
 // GetOnePost is the resolver for the GetOnePost field.
 func (r *queryResolver) GetOnePost(ctx context.Context, id int) (*model.Post, error) {
 	post := &model.Post{}
-    // Finder method
-    GetPost := r.Database.Preload("Comments").First(&post, id)
-    if GetPost.Error != nil {
-        fmt.Println(GetPost.Error)
-        return nil, GetPost.Error
-    }
-    return post, nil
+	// Finder method
+	GetPost := r.Database.Preload("Comments").First(&post, id)
+	if GetPost.Error != nil {
+		fmt.Println(GetPost.Error)
+		return nil, GetPost.Error
+	}
+	return post, nil
 }
 
 // GetComments is the resolver for the GetComments field.

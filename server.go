@@ -25,7 +25,10 @@ func main() {
 	database.CreateDB()
 	// migrate the db with Post model
 	database.MigrateDB()
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{Database: database.DBInstance}}))
+
+	config := graph.Config{Resolvers: &graph.Resolver{Database: database.DBInstance}}
+
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(config))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
